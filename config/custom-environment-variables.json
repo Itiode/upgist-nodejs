@@ -1,0 +1,4 @@
+{
+  "dbUrl": "upgist_dbUrl",
+  "jwtAuthPrivateKey": "upgist_jwtAuthPrivateKey"
+}
