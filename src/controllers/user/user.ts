@@ -6,6 +6,7 @@ import User, { validateSignupData, SignupData } from '../../models/user';
 interface SignupResData {
   message: string;
   user?: {
+    id: string;
     token: string;
     email: string;
     phone: string;
@@ -45,6 +46,7 @@ export const addUser: RequestHandler<any, SignupResData, SignupData> = async (
     res.status(201).send({
       message: 'Signup successful!',
       user: {
+        id: user._id,
         token: user.genAuthToken(),
         email,
         phone,

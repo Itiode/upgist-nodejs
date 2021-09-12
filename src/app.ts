@@ -7,6 +7,8 @@ import error from './middleware/auth';
 import connectToDB from './main/db';
 
 import userRoutes from './routes/user/user';
+import authRoute from './routes/user/auth';
+import adClick from './routes/ad-click';
 
 const app = express();
 
@@ -14,6 +16,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoute);
+app.use('/api/ad-click', adClick);
 
 app.use(error);
 

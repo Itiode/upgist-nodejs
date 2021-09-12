@@ -2,8 +2,8 @@ import Router from 'express';
 
 const router = Router();
 
-import { auth } from '../../controllers/user/auth';
+import { adClick } from '../controllers/ad-click';
 
-router.post('/', auth);
+router.post('/', adClick);
 
 export default router;

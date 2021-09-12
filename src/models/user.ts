@@ -114,3 +114,21 @@ export function validateSignupData(data: SignupData) {
 
   return schema.validate(data);
 }
+
+export interface AuthData {
+  email: string;
+  password: string;
+}
+
+export function validateAuthData(data: AuthData) {
+  const schema = Joi.object({
+    email: Joi.string()
+      .max(250)
+      .trim()
+      .email({ minDomainSegments: 2 })
+      .required(),
+    password: Joi.string().min(6).max(50).trim().required(),
+  });
+
+  return schema.validate(data);
+}

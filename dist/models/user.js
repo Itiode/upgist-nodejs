@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateSignupData = void 0;
+exports.validateAuthData = exports.validateSignupData = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const config_1 = __importDefault(require("config"));
 const Jwt = __importStar(require("jsonwebtoken"));
@@ -103,3 +103,15 @@ function validateSignupData(data) {
     return schema.validate(data);
 }
 exports.validateSignupData = validateSignupData;
+function validateAuthData(data) {
+    const schema = joi_1.default.object({
+        email: joi_1.default.string()
+            .max(250)
+            .trim()
+            .email({ minDomainSegments: 2 })
+            .required(),
+        password: joi_1.default.string().min(6).max(50).trim().required(),
+    });
+    return schema.validate(data);
+}
+exports.validateAuthData = validateAuthData;

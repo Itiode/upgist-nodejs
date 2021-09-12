@@ -50,6 +50,7 @@ const addUser = async (req, res, next) => {
         res.status(201).send({
             message: 'Signup successful!',
             user: {
+                id: user._id,
                 token: user.genAuthToken(),
                 email,
                 phone,
