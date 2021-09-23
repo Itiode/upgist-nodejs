@@ -23,5 +23,6 @@ const mongoose_1 = __importStar(require("mongoose"));
 const schema = new mongoose_1.Schema({
     clickId: { type: String, trim: true, required: true },
     count: { type: Number, min: 0, max: 100, required: true },
+    user: { type: mongoose_1.Schema.Types.ObjectId, required: true },
 }, { timestamps: true });
-exports.default = mongoose_1.default.model('ad-click', schema);
+exports.default = mongoose_1.default.model('Ad-Click', schema);
