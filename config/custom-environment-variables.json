@@ -1,4 +1,5 @@
 {
   "dbUrl": "upgist_dbUrl",
-  "jwtAuthPrivateKey": "upgist_jwtAuthPrivateKey"
+  "jwtAuthPrivateKey": "upgist_jwtAuthPrivateKey",
+  "newsApiKey": "upgist_newsApiKey"
 }

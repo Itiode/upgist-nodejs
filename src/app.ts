@@ -9,6 +9,7 @@ import connectToDB from './main/db';
 import userRoutes from './routes/user/user';
 import authRoute from './routes/user/auth';
 import adClick from './routes/ad-click';
+import newsRoute from './routes/news';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoute);
 app.use('/api/ad-click', adClick);
+app.use('/api/news', newsRoute);
 
 app.use(error);
 

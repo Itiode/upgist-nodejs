@@ -11,12 +11,14 @@ const db_1 = __importDefault(require("./main/db"));
 const user_1 = __importDefault(require("./routes/user/user"));
 const auth_2 = __importDefault(require("./routes/user/auth"));
 const ad_click_1 = __importDefault(require("./routes/ad-click"));
+const news_1 = __importDefault(require("./routes/news"));
 const app = express_1.default();
 app.use(cors_1.default());
 app.use(express_1.default.json());
 app.use('/api/users', user_1.default);
 app.use('/api/auth', auth_2.default);
 app.use('/api/ad-click', ad_click_1.default);
+app.use('/api/news', news_1.default);
 app.use(auth_1.default);
 db_1.default((db, err) => {
     if (!err) {
