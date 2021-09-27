@@ -4,7 +4,7 @@ import Article from '../models/article';
 import News from '../models/news';
 import { fetchNews } from '../services/news';
 
-interface GetNewsQueryParams {
+interface GetNewsAsAdminQueryParams {
   category: string;
   searchQuery: string;
 }
@@ -18,7 +18,7 @@ export const getNewsAsAdmin: RequestHandler<
   any,
   GetNewsAsAdminRes,
   any,
-  GetNewsQueryParams
+  GetNewsAsAdminQueryParams
 > = async (req, res, next) => {
   const { category, searchQuery } = req.query;
 
@@ -72,8 +72,8 @@ export const getNewsAsAdmin: RequestHandler<
 
 interface GetNewsRes {
   message: string;
-  count?: number;
-  data?: Article[];
+  count: number;
+  data: Article[];
 }
 
 interface GetNewsQueryParams {
@@ -95,7 +95,9 @@ export const getNews: RequestHandler<any, GetNewsRes, any, GetNewsQueryParams> =
         .select('-_id -__v');
 
       if (news.length === 0)
-        return res.status(404).send({ message: `No ${category} news found` });
+        return res
+          .status(404)
+          .send({ message: `No ${category} news found`, count: 0, data: [] });
 
       res.send({
         message: `${category} news fetched successfully`,
