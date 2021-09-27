@@ -5,7 +5,7 @@ import Joi from 'joi';
 
 import nameSchema, { Name } from './schemas/name';
 
-interface User {
+export interface User {
   name: Name;
   email: string;
   phone: string;
@@ -14,6 +14,13 @@ interface User {
   birthMonth: string;
   birthYear: string;
   password: string;
+  roles: string[];
+  bankDetails: {
+    bankName: string;
+    accountName: string;
+    accountNumber: string;
+    accountType: string;
+  };
 }
 
 const schema = new Schema<User>(
@@ -58,6 +65,13 @@ const schema = new Schema<User>(
       required: true,
     },
     password: { type: String, trim: true, required: true },
+    roles: [String],
+    bankDetails: {
+      bankName: { type: String, trim: true, maxLength: 250 },
+      accountType: { type: String, trim: true, maxLength: 25 },
+      accountNumber: { type: String, trim: true, minLength: 10, maxLength: 10 },
+      accountName: { type: String, trim: true, maxLength: 250 },
+    },
   },
   { timestamps: true }
 );
@@ -68,6 +82,7 @@ schema.methods.genAuthToken = function () {
       id: this._id,
       phone: this.phone,
       email: this.email,
+      roles: this.roles,
     },
     config.get('jwtAuthPrivateKey'),
     { expiresIn: '1h' }
@@ -128,6 +143,24 @@ export function validateAuthData(data: AuthData) {
       .email({ minDomainSegments: 2 })
       .required(),
     password: Joi.string().min(6).max(50).trim().required(),
+  });
+
+  return schema.validate(data);
+}
+
+interface BankDetails {
+  bankName: string;
+  accountName: string;
+  accountType: string;
+  accountNumber: string;
+}
+
+export function validateBankDetails(data: BankDetails) {
+  const schema = Joi.object({
+    banName: Joi.string().trim().max(250).required(),
+    accountName: Joi.string().trim().max(250).required(),
+    accountType: Joi.string().trim().max(25).required(),
+    accountNumber: Joi.string().trim().min(10).max(10).required(),
   });
 
   return schema.validate(data);

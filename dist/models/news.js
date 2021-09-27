@@ -25,7 +25,7 @@ const schema = new mongoose_1.Schema({
         type: String,
         trim: true,
         minLength: 1,
-        maxLength: 50,
+        maxLength: 250,
         required: true,
     },
     author: { type: String, trim: true, maxLength: 50 },
@@ -37,6 +37,7 @@ const schema = new mongoose_1.Schema({
         required: true,
     },
     description: { type: String, trim: true, maxLength: 250 },
+    content: { type: String, trim: true },
     category: {
         type: String,
         trim: true,

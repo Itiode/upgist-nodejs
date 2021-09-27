@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addUser = void 0;
+exports.getUsers = exports.addUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_1 = __importStar(require("../../models/user"));
 const addUser = async (req, res, next) => {
@@ -31,7 +31,9 @@ const addUser = async (req, res, next) => {
         return res.status(422).send({ message: error.details[0].message });
     const { firstName, middleName, lastName, email, phone, gender, birthDay, birthMonth, birthYear, password, } = req.body;
     try {
-        const fetchedUser = await user_1.default.findOne({ $or: [{ phone }, { email }] });
+        const fetchedUser = await user_1.default.findOne({
+            $or: [{ phone }, { email }],
+        });
         if (fetchedUser)
             return res.status(400).send({ message: 'User already registered' });
         const hashedPw = await bcrypt_1.default.hash(password, 12);
@@ -62,3 +64,24 @@ const addUser = async (req, res, next) => {
     }
 };
 exports.addUser = addUser;
+const getUsers = async (req, res, next) => {
+    const pageNumber = +req.query.pageNumber;
+    const pageSize = +req.query.pageSize;
+    try {
+        const users = await user_1.default.find()
+            .skip((pageNumber - 1) * pageSize)
+            .limit(pageSize)
+            .select('-password -__v');
+        if (users.length === 0)
+            return res.send({ message: 'No registered users' });
+        res.send({
+            message: 'Users fetched successfully',
+            count: users.length,
+            users: users,
+        });
+    }
+    catch (e) {
+        next(new Error('Error in adding user: ' + e));
+    }
+};
+exports.getUsers = getUsers;

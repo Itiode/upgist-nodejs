@@ -23,6 +23,7 @@ const getNewsAsAdmin = async (req, res, next) => {
                         description: article.description === null
                             ? article.content.slice(0, 100)
                             : article.description.slice(0, 100),
+                        content: article.content === null ? article.description : article.content,
                         category,
                         url: article.url,
                         urlToImage: article.urlToImage === null ? '' : article.urlToImage,

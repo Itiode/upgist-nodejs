@@ -14,14 +14,14 @@ async function fetchNews(category, searchQuery) {
         return {
             message: res.data.message,
             data: { status: res.data.status, articles: res.data.articles },
-            status: '0',
+            status: 0,
         };
     }
     catch (err) {
         console.log(err.response.data);
         return {
             message: err.response.data.message,
-            status: '1',
+            status: 1,
         };
     }
 }

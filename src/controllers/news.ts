@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express';
 
+import Article from '../models/article';
 import News from '../models/news';
 import { fetchNews } from '../services/news';
 
@@ -41,6 +42,8 @@ export const getNewsAsAdmin: RequestHandler<
               article.description === null
                 ? article.content.slice(0, 100)
                 : article.description.slice(0, 100),
+            content:
+              article.content === null ? article.description : article.content,
             category,
             url: article.url,
             urlToImage: article.urlToImage === null ? '' : article.urlToImage,
@@ -70,7 +73,7 @@ export const getNewsAsAdmin: RequestHandler<
 interface GetNewsRes {
   message: string;
   count?: number;
-  data?: any;
+  data?: Article[];
 }
 
 interface GetNewsQueryParams {

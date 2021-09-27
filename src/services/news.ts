@@ -5,9 +5,8 @@ import Article from '../models/article';
 
 export interface GetNewsResponse {
   message: string;
-  status: string;
+  status: number;
   data?: { status: string; articles: Article[] };
-  errorMsg?: string | null;
 }
 
 // TODO: Change to getting API key from environment variable.
@@ -27,14 +26,14 @@ export async function fetchNews(
     return {
       message: res.data.message,
       data: { status: res.data.status, articles: res.data.articles },
-      status: '0',
+      status: 0,
     };
   } catch (err: any) {
     console.log(err.response.data);
 
     return {
       message: err.response.data.message,
-      status: '1',
+      status: 1,
     };
   }
 }

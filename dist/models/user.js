@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateAuthData = exports.validateSignupData = void 0;
+exports.validateBankDetails = exports.validateAuthData = exports.validateSignupData = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const config_1 = __importDefault(require("config"));
 const Jwt = __importStar(require("jsonwebtoken"));
@@ -69,12 +69,20 @@ const schema = new mongoose_1.Schema({
         required: true,
     },
     password: { type: String, trim: true, required: true },
+    roles: [String],
+    bankDetails: {
+        bankName: { type: String, trim: true, maxLength: 250 },
+        accountType: { type: String, trim: true, maxLength: 25 },
+        accountNumber: { type: String, trim: true, minLength: 10, maxLength: 10 },
+        accountName: { type: String, trim: true, maxLength: 250 },
+    },
 }, { timestamps: true });
 schema.methods.genAuthToken = function () {
     return Jwt.sign({
         id: this._id,
         phone: this.phone,
         email: this.email,
+        roles: this.roles,
     }, config_1.default.get('jwtAuthPrivateKey'), { expiresIn: '1h' });
 };
 exports.default = mongoose_1.default.model('user', schema);
@@ -115,3 +123,13 @@ function validateAuthData(data) {
     return schema.validate(data);
 }
 exports.validateAuthData = validateAuthData;
+function validateBankDetails(data) {
+    const schema = joi_1.default.object({
+        banName: joi_1.default.string().trim().max(250).required(),
+        accountName: joi_1.default.string().trim().max(250).required(),
+        accountType: joi_1.default.string().trim().max(25).required(),
+        accountNumber: joi_1.default.string().trim().min(10).max(10).required(),
+    });
+    return schema.validate(data);
+}
+exports.validateBankDetails = validateBankDetails;
