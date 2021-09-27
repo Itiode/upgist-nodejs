@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUsers = exports.addUser = void 0;
+exports.addBankDetails = exports.getUsers = exports.addUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_1 = __importStar(require("../../models/user"));
 const addUser = async (req, res, next) => {
@@ -85,3 +85,11 @@ const getUsers = async (req, res, next) => {
     }
 };
 exports.getUsers = getUsers;
+const addBankDetails = async (req, res, next) => {
+    try {
+    }
+    catch (e) {
+        next(new Error('Error in adding user: ' + e));
+    }
+};
+exports.addBankDetails = addBankDetails;

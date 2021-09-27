@@ -148,7 +148,7 @@ export function validateAuthData(data: AuthData) {
   return schema.validate(data);
 }
 
-interface BankDetails {
+export interface BankDetails {
   bankName: string;
   accountName: string;
   accountType: string;

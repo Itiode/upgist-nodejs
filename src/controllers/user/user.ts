@@ -5,6 +5,8 @@ import UserModel, {
   User,
   validateSignupData,
   SignupData,
+  validateBankDetails,
+  BankDetails,
 } from '../../models/user';
 
 interface SignupResData {
@@ -109,5 +111,29 @@ export const getUsers: RequestHandler<
     });
   } catch (e) {
     next(new Error('Error in adding user: ' + e));
+  }
+};
+
+interface AddBankDetailsResData {
+  message: string;
+}
+
+export const updateBankDetails: RequestHandler<
+  any,
+  AddBankDetailsResData,
+  BankDetails
+> = async (req, res, next) => {
+  try {
+    const { error } = validateBankDetails(req.body);
+    if (error)
+      return res.status(422).send({ message: error.details[0].message });
+
+    const userId = req['user']._id;
+
+    await UserModel.updateOne({ _id: userId }, { bannkDetails: req.body });
+
+    return res.send({ message: 'Bank details updated successfully' });
+  } catch (e) {
+    next(new Error("Error in updating user's bank details: " + e));
   }
 };

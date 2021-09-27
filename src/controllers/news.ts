@@ -73,7 +73,7 @@ export const getNewsAsAdmin: RequestHandler<
 interface GetNewsRes {
   message: string;
   count: number;
-  data: Article[];
+  data: [];
 }
 
 interface GetNewsQueryParams {

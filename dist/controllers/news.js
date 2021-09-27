@@ -55,7 +55,9 @@ const getNews = async (req, res, next) => {
             .limit(pageSize)
             .select('-_id -__v');
         if (news.length === 0)
-            return res.status(404).send({ message: `No ${category} news found` });
+            return res
+                .status(404)
+                .send({ message: `No ${category} news found`, count: 0, data: [] });
         res.send({
             message: `${category} news fetched successfully`,
             count: news.length,
