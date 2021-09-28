@@ -165,3 +165,20 @@ export function validateBankDetails(data: BankDetails) {
 
   return schema.validate(data);
 }
+
+export interface AssignRoleReq {
+  phone: string;
+  role: string;
+}
+
+export function validateAssignRoleReq(data: AssignRoleReq) {
+  return Joi.object({
+    phone: Joi.string()
+      .trim()
+      .min(11)
+      .max(11)
+      .regex(new RegExp('^[0-9]*$'))
+      .required(),
+    role: Joi.string().trim().max(25).required(),
+  }).validate(data);
+}

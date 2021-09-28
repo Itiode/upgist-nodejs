@@ -7,6 +7,8 @@ import UserModel, {
   SignupData,
   validateBankDetails,
   BankDetails,
+  AssignRoleReq,
+  validateAssignRoleReq,
 } from '../../models/user';
 import { Name } from '../../models/schemas/name';
 
@@ -88,9 +90,11 @@ export const addUser: RequestHandler<any, SignupResData, SignupData> = async (
     const hashedPw = await bcrypt.hash(password, 12);
 
     const user = await new UserModel({
-      firstName,
-      middleName: middleName === null || undefined ? '' : middleName,
-      lastName,
+      name: {
+        first: firstName,
+        middle: middleName === null || undefined ? '' : middleName,
+        last: lastName,
+      },
       email,
       phone,
       gender,
@@ -152,13 +156,13 @@ export const getUsers: RequestHandler<
   }
 };
 
-interface AddBankDetailsResData {
+interface AddBankDetailsRes {
   message: string;
 }
 
 export const updateBankDetails: RequestHandler<
   any,
-  AddBankDetailsResData,
+  AddBankDetailsRes,
   BankDetails
 > = async (req, res, next) => {
   try {
@@ -175,3 +179,59 @@ export const updateBankDetails: RequestHandler<
     next(new Error("Error in updating user's bank details: " + e));
   }
 };
+
+interface AssignRoleRes {
+  message: string;
+}
+
+export const assignRole: RequestHandler<any, AssignRoleRes, AssignRoleReq> =
+  async (req, res, next) => {
+    const { error } = validateAssignRoleReq(req.body);
+    if (error)
+      return res.status(422).send({ message: error.details[0].message });
+
+    const isSuperAdmin = req['user'].roles.find(
+      (r: string) => r === 'Super Admin'
+    );
+
+    if (isSuperAdmin) {
+      const phone = req.body.phone;
+
+      try {
+        let user = await UserModel.findOne({ phone });
+        if (!user)
+          return res
+            .status(404)
+            .send({ message: 'No user with the given phone number' });
+
+        const validRoles = ['Admin', 'Moderator'];
+
+        const newRole = req.body.role;
+
+        const result = validRoles.find((r: string) => r === newRole);
+        if (!result) {
+          return res.status(400).send({ message: 'Invalid role.' });
+        }
+
+        const role = user.roles.find((r: string) => r === newRole);
+
+        if (role) {
+          return res
+            .status(400)
+            .send({ message: `User is a ${newRole} already.` });
+        } else {
+          user.roles.push(newRole);
+        }
+
+        await user.save();
+
+        res.send({ message: `${user.name} now has the role of ${newRole}` });
+      } catch (e) {
+        next(new Error('Error in assigning role: ' + e));
+      }
+    } else {
+      res
+        .status(403)
+        .send({ message: "Can't add role. User is not a super admin." });
+    }
+  };
