@@ -8,6 +8,44 @@ import UserModel, {
   validateBankDetails,
   BankDetails,
 } from '../../models/user';
+import { Name } from '../../models/schemas/name';
+
+interface GetUserResData {
+  message: string;
+  data?: {
+    name: Name;
+    email: string;
+    phone: string;
+    gender: string;
+    birthDay: string;
+    birthMonth: string;
+    bankDetails: {
+      bankName: string;
+      accountNumber: string;
+      accountType: string;
+      accountName: string;
+    };
+  };
+}
+
+export const getUser: RequestHandler<any, GetUserResData> = async (
+  req,
+  res,
+  next
+) => {
+  const userId = req['user'].id;
+
+  try {
+    const user = await UserModel.findById(userId).select(
+      '-password -__v -createdAt -updatedAt'
+    );
+    if (!user) return res.status(404).send({ message: 'User not found' });
+
+    res.send({ message: "User's data fetched successfully", data: user });
+  } catch (e) {
+    next(new Error('Error in getting user: ' + e));
+  }
+};
 
 interface SignupResData {
   message: string;

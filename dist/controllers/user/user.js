@@ -22,9 +22,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateBankDetails = exports.getUsers = exports.addUser = void 0;
+exports.updateBankDetails = exports.getUsers = exports.addUser = exports.getUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_1 = __importStar(require("../../models/user"));
+const getUser = async (req, res, next) => {
+    const userId = req['user'].id;
+    try {
+        const user = await user_1.default.findById(userId).select('-password -__v -createdAt -updatedAt');
+        if (!user)
+            return res.status(404).send({ message: 'User not found' });
+        res.send({ message: "User's data fetched successfully", data: user });
+    }
+    catch (e) {
+        next(new Error('Error in getting user: ' + e));
+    }
+};
+exports.getUser = getUser;
 const addUser = async (req, res, next) => {
     const { error } = user_1.validateSignupData(req.body);
     if (error)
