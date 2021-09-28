@@ -125,7 +125,7 @@ function validateAuthData(data) {
 exports.validateAuthData = validateAuthData;
 function validateBankDetails(data) {
     const schema = joi_1.default.object({
-        banName: joi_1.default.string().trim().max(250).required(),
+        bankName: joi_1.default.string().trim().max(250).required(),
         accountName: joi_1.default.string().trim().max(250).required(),
         accountType: joi_1.default.string().trim().max(25).required(),
         accountNumber: joi_1.default.string().trim().min(10).max(10).required(),

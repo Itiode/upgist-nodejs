@@ -10,4 +10,5 @@ const admin_1 = __importDefault(require("../../middleware/admin"));
 const auth_1 = __importDefault(require("../../middleware/auth"));
 router.post('/', user_1.addUser);
 router.get('/', auth_1.default, admin_1.default, user_1.getUsers);
+router.put('/bank-details', auth_1.default, user_1.updateBankDetails);
 exports.default = router;

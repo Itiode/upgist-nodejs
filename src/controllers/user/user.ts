@@ -128,9 +128,9 @@ export const updateBankDetails: RequestHandler<
     if (error)
       return res.status(422).send({ message: error.details[0].message });
 
-    const userId = req['user']._id;
+    const userId = req['user'].id;
 
-    await UserModel.updateOne({ _id: userId }, { bannkDetails: req.body });
+    await UserModel.updateOne({ _id: userId }, { bankDetails: req.body });
 
     return res.send({ message: 'Bank details updated successfully' });
   } catch (e) {

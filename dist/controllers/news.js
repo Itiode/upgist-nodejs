@@ -53,7 +53,7 @@ const getNews = async (req, res, next) => {
         const news = await news_1.default.find({ category })
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
-            .select('-_id -__v');
+            .select('-_id -__v -content');
         if (news.length === 0)
             return res
                 .status(404)

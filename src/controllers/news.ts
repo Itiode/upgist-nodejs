@@ -92,7 +92,7 @@ export const getNews: RequestHandler<any, GetNewsRes, any, GetNewsQueryParams> =
       const news = await News.find({ category })
         .skip((pageNumber - 1) * pageSize)
         .limit(pageSize)
-        .select('-_id -__v');
+        .select('-_id -__v -content');
 
       if (news.length === 0)
         return res

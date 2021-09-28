@@ -157,7 +157,7 @@ export interface BankDetails {
 
 export function validateBankDetails(data: BankDetails) {
   const schema = Joi.object({
-    banName: Joi.string().trim().max(250).required(),
+    bankName: Joi.string().trim().max(250).required(),
     accountName: Joi.string().trim().max(250).required(),
     accountType: Joi.string().trim().max(25).required(),
     accountNumber: Joi.string().trim().min(10).max(10).required(),
