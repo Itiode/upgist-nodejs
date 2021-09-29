@@ -56,6 +56,7 @@ interface SignupResData {
   user?: {
     id: string;
     token: string;
+    name: Name;
     email: string;
     phone: string;
   };
@@ -111,6 +112,7 @@ export const addUser: RequestHandler<any, SignupResData, SignupReq> = async (
       user: {
         id: user._id,
         token: user.genAuthToken(),
+        name: user.name,
         email,
         phone,
       },
@@ -122,6 +124,12 @@ export const addUser: RequestHandler<any, SignupResData, SignupReq> = async (
 
 interface UpdateUserRes {
   message: string;
+  user?: {
+    id: string;
+    name: Name;
+    email: string;
+    phone: string;
+  };
 }
 
 export const updateUser: RequestHandler<any, UpdateUserRes, UpdateUserReq> =
@@ -134,9 +142,21 @@ export const updateUser: RequestHandler<any, UpdateUserRes, UpdateUserReq> =
       const userId = req['user'].id;
       const { phone } = req.body;
 
-      await UserModel.updateOne({ _id: userId }, { $set: { phone } });
+      const user = await UserModel.updateOne(
+        { _id: userId },
+        { $set: { phone } },
+        { new: true }
+      );
 
-      res.send({ message: 'Update successful' });
+      res.send({
+        message: 'Update successful',
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+        },
+      });
     } catch (e) {
       next(new Error('Error in updating user: ' + e));
     }
