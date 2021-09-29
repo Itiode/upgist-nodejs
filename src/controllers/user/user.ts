@@ -142,11 +142,19 @@ export const updateUser: RequestHandler<any, UpdateUserRes, UpdateUserReq> =
       const userId = req['user'].id;
       const { phone } = req.body;
 
-      const user = await UserModel.updateOne(
+      // const user = await UserModel.updateOne(
+      //   { _id: userId },
+      //   { $set: { phone } },
+      //   { new: true }
+      // );
+
+      const user = await UserModel.findOneAndUpdate(
         { _id: userId },
         { $set: { phone } },
-        { new: true }
+        { new: true, useFindAndModify: false }
       );
+
+      console.log(user);
 
       res.send({
         message: 'Update successful',

@@ -69,6 +69,7 @@ const addUser = async (req, res, next) => {
             user: {
                 id: user._id,
                 token: user.genAuthToken(),
+                name: user.name,
                 email,
                 phone,
             },
@@ -86,8 +87,22 @@ const updateUser = async (req, res, next) => {
     try {
         const userId = req['user'].id;
         const { phone } = req.body;
-        await user_1.default.updateOne({ _id: userId }, { $set: { phone } });
-        res.send({ message: 'Update successful' });
+        // const user = await UserModel.updateOne(
+        //   { _id: userId },
+        //   { $set: { phone } },
+        //   { new: true }
+        // );
+        const user = await user_1.default.findOneAndUpdate({ _id: userId }, { $set: { phone } }, { new: true, useFindAndModify: false });
+        console.log(user);
+        res.send({
+            message: 'Update successful',
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+            },
+        });
     }
     catch (e) {
         next(new Error('Error in updating user: ' + e));
