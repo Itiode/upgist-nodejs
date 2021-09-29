@@ -91,7 +91,7 @@ schema.methods.genAuthToken = function () {
 
 export default mongoose.model('user', schema);
 
-export interface SignupData {
+export interface SignupReq {
   firstName: string;
   middleName: string;
   lastName: string;
@@ -104,7 +104,7 @@ export interface SignupData {
   password: string;
 }
 
-export function validateSignupData(data: SignupData) {
+export function validateSignupReq(data: SignupReq) {
   const schema = Joi.object({
     firstName: Joi.string().trim().min(2).max(25).required(),
     middleName: Joi.string().trim().min(2).max(25),
@@ -130,19 +130,34 @@ export function validateSignupData(data: SignupData) {
   return schema.validate(data);
 }
 
-export interface AuthData {
+export interface AuthReq {
   email: string;
   password: string;
 }
 
-export function validateAuthData(data: AuthData) {
-  const schema = Joi.object({
+export function validateAuthReq(data: AuthReq) {
+  return Joi.object({
     email: Joi.string()
       .max(250)
       .trim()
       .email({ minDomainSegments: 2 })
       .required(),
     password: Joi.string().min(6).max(50).trim().required(),
+  }).validate(data);
+}
+
+export interface UpdateUserReq {
+  phone: string;
+}
+
+export function validateUpdateUserReq(data: UpdateUserReq) {
+  const schema = Joi.object({
+    phone: Joi.string()
+      .trim()
+      .min(11)
+      .max(11)
+      .regex(new RegExp('^[0-9]*$'))
+      .required(),
   });
 
   return schema.validate(data);

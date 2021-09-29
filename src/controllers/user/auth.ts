@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import bcrypt from 'bcrypt';
 
-import User, { validateAuthData, AuthData } from '../../models/user';
+import User, { validateAuthReq, AuthReq } from '../../models/user';
 import { Name } from '../../models/schemas/name';
 
 interface AuthResponse {
@@ -15,12 +15,12 @@ interface AuthResponse {
   };
 }
 
-export const auth: RequestHandler<any, AuthResponse, AuthData> = async (
+export const auth: RequestHandler<any, AuthResponse, AuthReq> = async (
   req,
   res,
   next
 ) => {
-  const { error } = validateAuthData(req.body);
+  const { error } = validateAuthReq(req.body);
   if (error) return res.status(422).send({ message: error.details[0].message });
 
   try {

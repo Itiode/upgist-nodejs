@@ -26,7 +26,7 @@ exports.auth = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_1 = __importStar(require("../../models/user"));
 const auth = async (req, res, next) => {
-    const { error } = user_1.validateAuthData(req.body);
+    const { error } = user_1.validateAuthReq(req.body);
     if (error)
         return res.status(422).send({ message: error.details[0].message });
     try {

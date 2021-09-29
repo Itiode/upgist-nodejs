@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateBankDetails = exports.validateAuthData = exports.validateSignupData = void 0;
+exports.validateAssignRoleReq = exports.validateBankDetails = exports.validateUpdateUserReq = exports.validateAuthReq = exports.validateSignupReq = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const config_1 = __importDefault(require("config"));
 const Jwt = __importStar(require("jsonwebtoken"));
@@ -86,7 +86,7 @@ schema.methods.genAuthToken = function () {
     }, config_1.default.get('jwtAuthPrivateKey'), { expiresIn: '1h' });
 };
 exports.default = mongoose_1.default.model('user', schema);
-function validateSignupData(data) {
+function validateSignupReq(data) {
     const schema = joi_1.default.object({
         firstName: joi_1.default.string().trim().min(2).max(25).required(),
         middleName: joi_1.default.string().trim().min(2).max(25),
@@ -110,19 +110,30 @@ function validateSignupData(data) {
     });
     return schema.validate(data);
 }
-exports.validateSignupData = validateSignupData;
-function validateAuthData(data) {
-    const schema = joi_1.default.object({
+exports.validateSignupReq = validateSignupReq;
+function validateAuthReq(data) {
+    return joi_1.default.object({
         email: joi_1.default.string()
             .max(250)
             .trim()
             .email({ minDomainSegments: 2 })
             .required(),
         password: joi_1.default.string().min(6).max(50).trim().required(),
+    }).validate(data);
+}
+exports.validateAuthReq = validateAuthReq;
+function validateUpdateUserReq(data) {
+    const schema = joi_1.default.object({
+        phone: joi_1.default.string()
+            .trim()
+            .min(11)
+            .max(11)
+            .regex(new RegExp('^[0-9]*$'))
+            .required(),
     });
     return schema.validate(data);
 }
-exports.validateAuthData = validateAuthData;
+exports.validateUpdateUserReq = validateUpdateUserReq;
 function validateBankDetails(data) {
     const schema = joi_1.default.object({
         bankName: joi_1.default.string().trim().max(250).required(),
@@ -133,3 +144,15 @@ function validateBankDetails(data) {
     return schema.validate(data);
 }
 exports.validateBankDetails = validateBankDetails;
+function validateAssignRoleReq(data) {
+    return joi_1.default.object({
+        phone: joi_1.default.string()
+            .trim()
+            .min(11)
+            .max(11)
+            .regex(new RegExp('^[0-9]*$'))
+            .required(),
+        role: joi_1.default.string().trim().max(25).required(),
+    }).validate(data);
+}
+exports.validateAssignRoleReq = validateAssignRoleReq;

@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateBankDetails = exports.getUsers = exports.addUser = exports.getUser = void 0;
+exports.assignRole = exports.updateBankDetails = exports.getUsers = exports.updateUser = exports.addUser = exports.getUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_1 = __importStar(require("../../models/user"));
 const getUser = async (req, res, next) => {
@@ -39,7 +39,7 @@ const getUser = async (req, res, next) => {
 };
 exports.getUser = getUser;
 const addUser = async (req, res, next) => {
-    const { error } = user_1.validateSignupData(req.body);
+    const { error } = user_1.validateSignupReq(req.body);
     if (error)
         return res.status(422).send({ message: error.details[0].message });
     const { firstName, middleName, lastName, email, phone, gender, birthDay, birthMonth, birthYear, password, } = req.body;
@@ -51,9 +51,11 @@ const addUser = async (req, res, next) => {
             return res.status(400).send({ message: 'User already registered' });
         const hashedPw = await bcrypt_1.default.hash(password, 12);
         const user = await new user_1.default({
-            firstName,
-            middleName: middleName === null || undefined ? '' : middleName,
-            lastName,
+            name: {
+                first: firstName,
+                middle: middleName === null || undefined ? '' : middleName,
+                last: lastName,
+            },
             email,
             phone,
             gender,
@@ -77,6 +79,21 @@ const addUser = async (req, res, next) => {
     }
 };
 exports.addUser = addUser;
+const updateUser = async (req, res, next) => {
+    const { error } = user_1.validateUpdateUserReq(req.body);
+    if (error)
+        return res.status(422).send({ message: error.details[0].message });
+    try {
+        const userId = req['user'].id;
+        const { phone } = req.body;
+        await user_1.default.updateOne({ _id: userId }, { $set: { phone } });
+        res.send({ message: 'Update successful' });
+    }
+    catch (e) {
+        next(new Error('Error in updating user: ' + e));
+    }
+};
+exports.updateUser = updateUser;
 const getUsers = async (req, res, next) => {
     const pageNumber = +req.query.pageNumber;
     const pageSize = +req.query.pageSize;
@@ -112,3 +129,45 @@ const updateBankDetails = async (req, res, next) => {
     }
 };
 exports.updateBankDetails = updateBankDetails;
+const assignRole = async (req, res, next) => {
+    const { error } = user_1.validateAssignRoleReq(req.body);
+    if (error)
+        return res.status(422).send({ message: error.details[0].message });
+    const isSuperAdmin = req['user'].roles.find((r) => r === 'Super Admin');
+    if (isSuperAdmin) {
+        const phone = req.body.phone;
+        try {
+            let user = await user_1.default.findOne({ phone });
+            if (!user)
+                return res
+                    .status(404)
+                    .send({ message: 'No user with the given phone number' });
+            const validRoles = ['Admin', 'Moderator'];
+            const newRole = req.body.role;
+            const result = validRoles.find((r) => r === newRole);
+            if (!result) {
+                return res.status(400).send({ message: 'Invalid role.' });
+            }
+            const role = user.roles.find((r) => r === newRole);
+            if (role) {
+                return res
+                    .status(400)
+                    .send({ message: `User is a ${newRole} already.` });
+            }
+            else {
+                user.roles.push(newRole);
+            }
+            await user.save();
+            res.send({ message: `${user.name} now has the role of ${newRole}` });
+        }
+        catch (e) {
+            next(new Error('Error in assigning role: ' + e));
+        }
+    }
+    else {
+        res
+            .status(403)
+            .send({ message: "Can't add role. User is not a super admin." });
+    }
+};
+exports.assignRole = assignRole;

@@ -11,6 +11,8 @@ const auth_1 = __importDefault(require("../../middleware/auth"));
 const user_2 = require("../../controllers/user/user");
 router.post('/', user_1.addUser);
 router.get('/me', auth_1.default, user_2.getUser);
+router.put('/me', auth_1.default, user_1.updateUser);
 router.get('/', auth_1.default, admin_1.default, user_1.getUsers);
 router.put('/bank-details', auth_1.default, user_1.updateBankDetails);
+router.put('/assign-role', auth_1.default, user_1.assignRole);
 exports.default = router;

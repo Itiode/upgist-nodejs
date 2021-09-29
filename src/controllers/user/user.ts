@@ -3,8 +3,10 @@ import { RequestHandler } from 'express';
 
 import UserModel, {
   User,
-  validateSignupData,
-  SignupData,
+  validateSignupReq,
+  SignupReq,
+  UpdateUserReq,
+  validateUpdateUserReq,
   validateBankDetails,
   BankDetails,
   AssignRoleReq,
@@ -59,12 +61,12 @@ interface SignupResData {
   };
 }
 
-export const addUser: RequestHandler<any, SignupResData, SignupData> = async (
+export const addUser: RequestHandler<any, SignupResData, SignupReq> = async (
   req,
   res,
   next
 ) => {
-  const { error } = validateSignupData(req.body);
+  const { error } = validateSignupReq(req.body);
   if (error) return res.status(422).send({ message: error.details[0].message });
 
   const {
@@ -117,6 +119,28 @@ export const addUser: RequestHandler<any, SignupResData, SignupData> = async (
     next(new Error('Error in adding user: ' + e));
   }
 };
+
+interface UpdateUserRes {
+  message: string;
+}
+
+export const updateUser: RequestHandler<any, UpdateUserRes, UpdateUserReq> =
+  async (req, res, next) => {
+    const { error } = validateUpdateUserReq(req.body);
+    if (error)
+      return res.status(422).send({ message: error.details[0].message });
+
+    try {
+      const userId = req['user'].id;
+      const { phone } = req.body;
+
+      await UserModel.updateOne({ _id: userId }, { $set: { phone } });
+
+      res.send({ message: 'Update successful' });
+    } catch (e) {
+      next(new Error('Error in updating user: ' + e));
+    }
+  };
 
 interface GetUsersQueryParams {
   pageNumber: string;
