@@ -17,6 +17,7 @@ import { Name } from '../../models/schemas/name';
 interface GetUserResData {
   message: string;
   user?: {
+    id: string;
     name: Name;
     email: string;
     phone: string;
@@ -45,7 +46,30 @@ export const getUser: RequestHandler<any, GetUserResData> = async (
     );
     if (!user) return res.status(404).send({ message: 'User not found' });
 
-    res.send({ message: "User's data fetched successfully", user });
+    const {
+      _id: id,
+      name,
+      email,
+      phone,
+      gender,
+      birthDay,
+      birthMonth,
+      bankDetails,
+    } = user;
+
+    res.send({
+      message: "User's data fetched successfully",
+      user: {
+        id,
+        name,
+        email,
+        phone,
+        gender,
+        birthDay,
+        birthMonth,
+        bankDetails,
+      },
+    });
   } catch (e) {
     next(new Error('Error in getting user: ' + e));
   }
@@ -124,12 +148,6 @@ export const addUser: RequestHandler<any, SignupResData, SignupReq> = async (
 
 interface UpdateUserRes {
   message: string;
-  user?: {
-    id: string;
-    name: Name;
-    email: string;
-    phone: string;
-  };
 }
 
 export const updateUser: RequestHandler<any, UpdateUserRes, UpdateUserReq> =
@@ -152,12 +170,6 @@ export const updateUser: RequestHandler<any, UpdateUserRes, UpdateUserReq> =
 
       res.send({
         message: 'Update successful',
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          phone: user.phone,
-        },
       });
     } catch (e) {
       next(new Error('Error in updating user: ' + e));

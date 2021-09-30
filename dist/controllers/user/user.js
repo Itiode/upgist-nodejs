@@ -31,7 +31,20 @@ const getUser = async (req, res, next) => {
         const user = await user_1.default.findById(userId).select('-password -__v -createdAt -updatedAt');
         if (!user)
             return res.status(404).send({ message: 'User not found' });
-        res.send({ message: "User's data fetched successfully", user });
+        const { _id: id, name, email, phone, gender, birthDay, birthMonth, bankDetails, } = user;
+        res.send({
+            message: "User's data fetched successfully",
+            user: {
+                id,
+                name,
+                email,
+                phone,
+                gender,
+                birthDay,
+                birthMonth,
+                bankDetails,
+            },
+        });
     }
     catch (e) {
         next(new Error('Error in getting user: ' + e));
@@ -91,12 +104,6 @@ const updateUser = async (req, res, next) => {
         console.log(user);
         res.send({
             message: 'Update successful',
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                phone: user.phone,
-            },
         });
     }
     catch (e) {
