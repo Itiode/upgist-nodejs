@@ -95,9 +95,11 @@ export const getNews: RequestHandler<any, GetNewsRes, any, GetNewsQueryParams> =
         .select('-_id -__v -content');
 
       if (news.length === 0)
-        return res
-          .status(404)
-          .send({ message: `No ${category} news found`, count: 0, data: [] });
+        return res.send({
+          message: `No ${category} news found`,
+          count: 0,
+          data: [],
+        });
 
       res.send({
         message: `${category} news fetched successfully`,

@@ -77,13 +77,14 @@ const schema = new mongoose_1.Schema({
         accountName: { type: String, trim: true, maxLength: 250 },
     },
 }, { timestamps: true });
+// TODO: Token should expire after 1 day.
 schema.methods.genAuthToken = function () {
     return Jwt.sign({
         id: this._id,
         phone: this.phone,
         email: this.email,
         roles: this.roles,
-    }, config_1.default.get('jwtAuthPrivateKey'), { expiresIn: '1h' });
+    }, config_1.default.get('jwtAuthPrivateKey'));
 };
 exports.default = mongoose_1.default.model('user', schema);
 function validateSignupReq(data) {

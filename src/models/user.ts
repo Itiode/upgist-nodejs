@@ -76,6 +76,7 @@ const schema = new Schema<User>(
   { timestamps: true }
 );
 
+// TODO: Token should expire after 1 day.
 schema.methods.genAuthToken = function () {
   return Jwt.sign(
     {
@@ -84,8 +85,7 @@ schema.methods.genAuthToken = function () {
       email: this.email,
       roles: this.roles,
     },
-    config.get('jwtAuthPrivateKey'),
-    { expiresIn: '1h' }
+    config.get('jwtAuthPrivateKey')
   );
 };
 
