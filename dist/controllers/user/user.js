@@ -31,7 +31,7 @@ const getUser = async (req, res, next) => {
         const user = await user_1.default.findById(userId).select('-password -__v -createdAt -updatedAt');
         if (!user)
             return res.status(404).send({ message: 'User not found' });
-        res.send({ message: "User's data fetched successfully", data: user });
+        res.send({ message: "User's data fetched successfully", user });
     }
     catch (e) {
         next(new Error('Error in getting user: ' + e));
@@ -87,11 +87,6 @@ const updateUser = async (req, res, next) => {
     try {
         const userId = req['user'].id;
         const { phone } = req.body;
-        // const user = await UserModel.updateOne(
-        //   { _id: userId },
-        //   { $set: { phone } },
-        //   { new: true }
-        // );
         const user = await user_1.default.findOneAndUpdate({ _id: userId }, { $set: { phone } }, { new: true, useFindAndModify: false });
         console.log(user);
         res.send({

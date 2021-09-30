@@ -16,7 +16,7 @@ import { Name } from '../../models/schemas/name';
 
 interface GetUserResData {
   message: string;
-  data?: {
+  user?: {
     name: Name;
     email: string;
     phone: string;
@@ -45,7 +45,7 @@ export const getUser: RequestHandler<any, GetUserResData> = async (
     );
     if (!user) return res.status(404).send({ message: 'User not found' });
 
-    res.send({ message: "User's data fetched successfully", data: user });
+    res.send({ message: "User's data fetched successfully", user });
   } catch (e) {
     next(new Error('Error in getting user: ' + e));
   }
@@ -141,12 +141,6 @@ export const updateUser: RequestHandler<any, UpdateUserRes, UpdateUserReq> =
     try {
       const userId = req['user'].id;
       const { phone } = req.body;
-
-      // const user = await UserModel.updateOne(
-      //   { _id: userId },
-      //   { $set: { phone } },
-      //   { new: true }
-      // );
 
       const user = await UserModel.findOneAndUpdate(
         { _id: userId },
