@@ -17,7 +17,7 @@ router.post('/', addUser);
 router.get('/me', auth, getUser);
 router.put('/me', auth, updateUser);
 router.get('/', auth, admin, getUsers);
-router.put('/bank-details', auth, updateBankDetails);
+router.put('/me/bank-details', auth, updateBankDetails);
 router.put('/assign-role', auth, assignRole);
 
 export default router;
