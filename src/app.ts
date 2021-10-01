@@ -19,8 +19,8 @@ app.use(express.json());
 
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoute);
-app.use('/api/ad-click', adClick);
-app.use('/api/ad-impression', adImpression);
+app.use('/api/ad-clicks', adClick);
+app.use('/api/ad-impressions', adImpression);
 app.use('/api/news', newsRoute);
 
 app.use(error);

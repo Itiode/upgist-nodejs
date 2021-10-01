@@ -3,8 +3,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adClick = void 0;
+exports.adClick = exports.getAdClicksCount = void 0;
 const ad_click_1 = __importDefault(require("../models/ad-click"));
+const user_1 = __importDefault(require("../models/user"));
+const getAdClicksCount = async (req, res, next) => {
+    const userId = req.params.userId;
+    try {
+        const user = await user_1.default.findById(userId);
+        if (!user)
+            return res.status(404).send({ message: 'No user with the given Id' });
+        const adClicksCount = await ad_click_1.default.find({
+            user: userId,
+        }).countDocuments();
+        res.send({
+            message: 'Ad clicks count gotten successfully',
+            adClicksCount,
+        });
+    }
+    catch (err) {
+        next(new Error('Error in getting ad clicks count: ' + err));
+    }
+};
+exports.getAdClicksCount = getAdClicksCount;
 // TODO: Identify clicks from mobile app. To prevent endpoint abuse.
 const adClick = async (req, res, next) => {
     const userId = req['user'].id;

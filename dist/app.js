@@ -18,8 +18,8 @@ app.use(cors_1.default());
 app.use(express_1.default.json());
 app.use('/api/users', user_1.default);
 app.use('/api/auth', auth_2.default);
-app.use('/api/ad-click', ad_click_1.default);
-app.use('/api/ad-impression', ad_impression_1.default);
+app.use('/api/ad-clicks', ad_click_1.default);
+app.use('/api/ad-impressions', ad_impression_1.default);
 app.use('/api/news', news_1.default);
 app.use(auth_1.default);
 db_1.default((db, err) => {
