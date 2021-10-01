@@ -1,5 +1,5 @@
 "# upgist-nodejs" 
 
 #TODO:
-- Upadating a user's info
 - Add environment variable checking at startup 
+- TODO: Identify clicks from mobile app. To prevent endpoint abuse.
