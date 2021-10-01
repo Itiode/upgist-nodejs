@@ -8,27 +8,29 @@ interface GetAdClicksRes {
   adClicksCount?: number;
 }
 
-export const getAdClicksCount: RequestHandler<{ userId: string }, GetAdClicksRes> =
-  async (req, res, next) => {
-    const userId = req.params.userId;
+export const getAdClicksCount: RequestHandler<
+  { userId: string },
+  GetAdClicksRes
+> = async (req, res, next) => {
+  const userId = req.params.userId;
 
-    try {
-      const user = await UserModel.findById(userId);
-      if (!user)
-        return res.status(404).send({ message: 'No user with the given Id' });
+  try {
+    const user = await UserModel.findById(userId);
+    if (!user)
+      return res.status(404).send({ message: 'No user with the given Id' });
 
-      const adClicksCount = await AdClick.find({
-        user: userId,
-      }).countDocuments();
+    const adClicksCount = await AdClick.find({
+      user: userId,
+    }).countDocuments();
 
-      res.send({
-        message: 'Ad clicks count gotten successfully',
-        adClicksCount,
-      });
-    } catch (err) {
-      next(new Error('Error in getting ad clicks count: ' + err));
-    }
-  };
+    res.send({
+      message: 'Ad clicks count gotten successfully',
+      adClicksCount,
+    });
+  } catch (err) {
+    next(new Error('Error in getting ad clicks count: ' + err));
+  }
+};
 
 interface AdClickResponse {
   message: string;
