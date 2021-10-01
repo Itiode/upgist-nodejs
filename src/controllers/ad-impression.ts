@@ -1,6 +1,36 @@
 import { RequestHandler } from 'express';
 
 import AdImpression from '../models/ad-impression';
+import UserModel from '../models/user';
+
+interface GetAdImpressionsRes {
+  message: string;
+  adImpressionsCount?: number;
+}
+
+export const getAdImpressionsCount: RequestHandler<
+  { userId: string },
+  GetAdImpressionsRes
+> = async (req, res, next) => {
+  const userId = req.params.userId;
+
+  try {
+    const user = await UserModel.findById(userId);
+    if (!user)
+      return res.status(404).send({ message: 'No user with the given Id' });
+
+    const adImpressionsCount = await AdImpression.find({
+      user: userId,
+    }).countDocuments();
+
+    res.send({
+      message: 'Ad impressions count gotten successfully',
+      adImpressionsCount,
+    });
+  } catch (err) {
+    next(new Error('Error in getting ad impressions count: ' + err));
+  }
+};
 
 interface AdImpressionRes {
   message: string;
