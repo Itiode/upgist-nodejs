@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.assignRole = exports.updateBankDetails = exports.getUsers = exports.updateUser = exports.addUser = exports.getUser = void 0;
+exports.assignRole = exports.updateBankDetails = exports.getUsers = exports.updateUser = exports.addUser = exports.getUserAsAdmin = exports.getUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_1 = __importStar(require("../../models/user"));
 const getUser = async (req, res, next) => {
@@ -31,7 +31,7 @@ const getUser = async (req, res, next) => {
         const user = await user_1.default.findById(userId).select('-password -__v -createdAt -updatedAt');
         if (!user)
             return res.status(404).send({ message: 'User not found' });
-        const { _id: id, name, email, phone, gender, birthDay, birthMonth, bankDetails, } = user;
+        const { _id: id, name, email, phone, gender, birthDay, birthMonth, roles, bankDetails, } = user;
         res.send({
             message: "User's data fetched successfully",
             user: {
@@ -42,6 +42,7 @@ const getUser = async (req, res, next) => {
                 gender,
                 birthDay,
                 birthMonth,
+                roles,
                 bankDetails,
             },
         });
@@ -51,6 +52,13 @@ const getUser = async (req, res, next) => {
     }
 };
 exports.getUser = getUser;
+const getUserAsAdmin = async (req, res, next) => {
+    const userId = req.params.userId;
+    const user = { id: userId };
+    req['user'] = user;
+    exports.getUser(req, res, next);
+};
+exports.getUserAsAdmin = getUserAsAdmin;
 const addUser = async (req, res, next) => {
     const { error } = user_1.validateSignupReq(req.body);
     if (error)

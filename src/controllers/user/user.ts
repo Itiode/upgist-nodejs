@@ -24,6 +24,7 @@ interface GetUserResData {
     gender: string;
     birthDay: string;
     birthMonth: string;
+    roles: string[];
     bankDetails: {
       bankName: string;
       accountNumber: string;
@@ -54,6 +55,7 @@ export const getUser: RequestHandler<any, GetUserResData> = async (
       gender,
       birthDay,
       birthMonth,
+      roles,
       bankDetails,
     } = user;
 
@@ -67,12 +69,25 @@ export const getUser: RequestHandler<any, GetUserResData> = async (
         gender,
         birthDay,
         birthMonth,
+        roles,
         bankDetails,
       },
     });
   } catch (e) {
     next(new Error('Error in getting user: ' + e));
   }
+};
+
+export const getUserAsAdmin: RequestHandler<{ userId: string }> = async (
+  req,
+  res,
+  next
+) => {
+  const userId = req.params.userId;
+  const user = { id: userId };
+  req['user'] = user;
+
+  getUser(req, res, next);
 };
 
 interface SignupResData {
