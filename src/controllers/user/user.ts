@@ -78,16 +78,28 @@ export const getUser: RequestHandler<any, GetUserResData> = async (
   }
 };
 
-export const getUserAsAdmin: RequestHandler<{ userId: string }> = async (
+export const getUserAsAdmin: RequestHandler<{ phone: string }> = async (
   req,
   res,
   next
 ) => {
-  const userId = req.params.userId;
-  const user = { id: userId };
-  req['user'] = user;
+  try {
+    const fetchedUser = await UserModel.findOne({
+      phone: req.params.phone,
+    }).select('_id');
 
-  getUser(req, res, next);
+    if (!fetchedUser)
+      return res
+        .status(404)
+        .send({ message: 'No user with the given phone number' });
+
+    const user = { id: fetchedUser._id };
+    req['user'] = user;
+
+    getUser(req, res, next);
+  } catch (e) {
+    next(new Error('Error in getting user: ' + e));
+  }
 };
 
 interface SignupResData {

@@ -53,10 +53,21 @@ const getUser = async (req, res, next) => {
 };
 exports.getUser = getUser;
 const getUserAsAdmin = async (req, res, next) => {
-    const userId = req.params.userId;
-    const user = { id: userId };
-    req['user'] = user;
-    exports.getUser(req, res, next);
+    try {
+        const fetchedUser = await user_1.default.findOne({
+            phone: req.params.phone,
+        }).select('_id');
+        if (!fetchedUser)
+            return res
+                .status(404)
+                .send({ message: 'No user with the given phone number' });
+        const user = { id: fetchedUser._id };
+        req['user'] = user;
+        exports.getUser(req, res, next);
+    }
+    catch (e) {
+        next(new Error('Error in getting user: ' + e));
+    }
 };
 exports.getUserAsAdmin = getUserAsAdmin;
 const addUser = async (req, res, next) => {
