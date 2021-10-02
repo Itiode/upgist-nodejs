@@ -2,10 +2,10 @@ import Router from 'express';
 
 const router = Router();
 
-import { adClick, getAdClicksCount } from '../controllers/ad-click';
+import { registerAdClick, getAdClicksCount } from '../controllers/ad-click';
 import auth from '../middleware/auth';
 
-router.post('/', auth, adClick);
+router.post('/', auth, registerAdClick);
 router.get('/count/:userId', getAdClicksCount);
 
 export default router;

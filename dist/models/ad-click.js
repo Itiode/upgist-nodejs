@@ -19,10 +19,25 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getClicksCount = exports.generateClickId = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const schema = new mongoose_1.Schema({
     clickId: { type: String, trim: true, required: true },
-    count: { type: Number, min: 0, max: 100, required: true },
+    count: { type: Number, min: 0, max: 1000, required: true },
     user: { type: mongoose_1.Schema.Types.ObjectId, required: true },
 }, { timestamps: true });
 exports.default = mongoose_1.default.model('Ad-Click', schema);
+const generateClickId = (userId) => {
+    const date = new Date();
+    const transformedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+    return `${userId}:${transformedDate}`;
+};
+exports.generateClickId = generateClickId;
+const getClicksCount = (clicks) => {
+    let clicksCount = 0;
+    for (let click of clicks) {
+        clicksCount += click.count;
+    }
+    return clicksCount;
+};
+exports.getClicksCount = getClicksCount;

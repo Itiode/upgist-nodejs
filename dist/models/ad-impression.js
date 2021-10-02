@@ -19,10 +19,25 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getImpressionsCount = exports.generateImpressionId = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const schema = new mongoose_1.Schema({
     impressionId: { type: String, trim: true, required: true },
-    count: { type: Number, min: 0, max: 100, required: true },
+    count: { type: Number, min: 0, max: 1000, required: true },
     user: { type: mongoose_1.Schema.Types.ObjectId, required: true },
 }, { timestamps: true });
 exports.default = mongoose_1.default.model('Ad-Impression', schema);
+const generateImpressionId = (userId) => {
+    const date = new Date();
+    const transformedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+    return `${userId}:${transformedDate}`;
+};
+exports.generateImpressionId = generateImpressionId;
+const getImpressionsCount = (impressions) => {
+    let impressionsCount = 0;
+    for (let impression of impressions) {
+        impressionsCount += impression.count;
+    }
+    return impressionsCount;
+};
+exports.getImpressionsCount = getImpressionsCount;

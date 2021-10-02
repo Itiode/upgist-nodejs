@@ -7,6 +7,6 @@ const express_1 = __importDefault(require("express"));
 const router = express_1.default();
 const ad_impression_1 = require("../controllers/ad-impression");
 const auth_1 = __importDefault(require("../middleware/auth"));
-router.post('/', auth_1.default, ad_impression_1.adImpression);
-router.get('/count/:userId', ad_impression_1.adImpression);
+router.post('/', auth_1.default, ad_impression_1.registerAdImpression);
+router.get('/count/:userId', ad_impression_1.getAdImpressionsCount);
 exports.default = router;

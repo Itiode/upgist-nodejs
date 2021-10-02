@@ -2,10 +2,10 @@ import Router from 'express';
 
 const router = Router();
 
-import { adImpression } from '../controllers/ad-impression';
+import { registerAdImpression, getAdImpressionsCount } from '../controllers/ad-impression';
 import auth from '../middleware/auth';
 
-router.post('/', auth, adImpression);
-router.get('/count/:userId', adImpression);
+router.post('/', auth, registerAdImpression);
+router.get('/count/:userId', getAdImpressionsCount);
 
 export default router;
