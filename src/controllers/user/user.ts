@@ -303,14 +303,14 @@ export const assignRole: RequestHandler<any, AssignRoleRes, AssignRoleReq> =
         if (role) {
           return res
             .status(400)
-            .send({ message: `User is a ${newRole} already.` });
+            .send({ message: `User has the role of ${newRole} already.` });
         } else {
           user.roles.push(newRole);
         }
 
         await user.save();
 
-        res.send({ message: `${user.name} now has the role of ${newRole}` });
+        res.send({ message: `${user.name.first} ${user.name.last} now has the role of ${newRole}` });
       } catch (e) {
         next(new Error('Error in assigning role: ' + e));
       }
