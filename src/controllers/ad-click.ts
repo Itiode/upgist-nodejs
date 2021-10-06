@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
 
-import AdClick, { generateClickId } from '../models/ad-click';
+import AdClick, { getClicksCount } from '../models/ad-click';
+import { generateId, QueryDate, getQueryDate } from '../shared/ads';
 import UserModel from '../models/user';
 
 interface GetAdClicksRes {
@@ -10,21 +11,29 @@ interface GetAdClicksRes {
 
 export const getAdClicksCount: RequestHandler<
   { userId: string },
-  GetAdClicksRes
+  GetAdClicksRes,
+  any,
+  QueryDate
 > = async (req, res, next) => {
+  const { day, month, year } = req.query;
+  const date: QueryDate = { day, month, year };
+
   const userId = req.params.userId;
-  const clickId = generateClickId(userId);
+  const queryDate = getQueryDate(date);
 
   try {
     const user = await UserModel.findById(userId);
     if (!user)
       return res.status(404).send({ message: 'No user with the given ID' });
+    const adClicks = await AdClick.find({
+      clickId: new RegExp(queryDate + '$'),
+    });
 
-    const adClick = await AdClick.findOne({ clickId });
+    const adClicksCount = getClicksCount(adClicks);
 
     res.send({
       message: 'Ad clicks count gotten successfully',
-      adClicksCount: adClick.count,
+      adClicksCount,
     });
   } catch (err) {
     next(new Error('Error in getting ad clicks count: ' + err));
@@ -44,7 +53,7 @@ export const registerAdClick: RequestHandler<any, AdClickResponse> = async (
 ) => {
   const userId = req['user'].id;
 
-  const clickId = generateClickId(userId);
+  const clickId = generateId(userId);
 
   try {
     const adClick = await AdClick.findOne({ clickId });

@@ -24,18 +24,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerAdClick = exports.getAdClicksCount = void 0;
 const ad_click_1 = __importStar(require("../models/ad-click"));
+const ads_1 = require("../shared/ads");
 const user_1 = __importDefault(require("../models/user"));
 const getAdClicksCount = async (req, res, next) => {
+    const { day, month, year } = req.query;
+    const date = { day, month, year };
     const userId = req.params.userId;
-    const clickId = ad_click_1.generateClickId(userId);
+    const queryDate = ads_1.getQueryDate(date);
     try {
         const user = await user_1.default.findById(userId);
         if (!user)
             return res.status(404).send({ message: 'No user with the given ID' });
-        const adClick = await ad_click_1.default.findOne({ clickId });
+        const adClicks = await ad_click_1.default.find({
+            clickId: new RegExp(queryDate + '$'),
+        });
+        const adClicksCount = ad_click_1.getClicksCount(adClicks);
         res.send({
             message: 'Ad clicks count gotten successfully',
-            adClicksCount: adClick.count,
+            adClicksCount,
         });
     }
     catch (err) {
@@ -46,7 +52,7 @@ exports.getAdClicksCount = getAdClicksCount;
 // TODO: Identify clicks from mobile app. To prevent endpoint abuse.
 const registerAdClick = async (req, res, next) => {
     const userId = req['user'].id;
-    const clickId = ad_click_1.generateClickId(userId);
+    const clickId = ads_1.generateId(userId);
     try {
         const adClick = await ad_click_1.default.findOne({ clickId });
         if (adClick) {

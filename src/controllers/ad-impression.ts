@@ -1,9 +1,7 @@
 import { RequestHandler } from 'express';
 
-import AdImpression, {
-  generateImpressionId,
-  getImpressionsCount,
-} from '../models/ad-impression';
+import AdImpression, { getImpressionsCount } from '../models/ad-impression';
+import { QueryDate, getQueryDate, generateId } from '../shared/ads';
 import UserModel from '../models/user';
 
 interface GetAdImpressionsRes {
@@ -13,21 +11,30 @@ interface GetAdImpressionsRes {
 
 export const getAdImpressionsCount: RequestHandler<
   { userId: string },
-  GetAdImpressionsRes
+  GetAdImpressionsRes,
+  any,
+  QueryDate
 > = async (req, res, next) => {
+  const { day, month, year } = req.query;
+  const date: QueryDate = { day, month, year };
+
   const userId = req.params.userId;
-  const impressionId = generateImpressionId(userId);
+  const queryDate = getQueryDate(date);
 
   try {
     const user = await UserModel.findById(userId);
     if (!user)
       return res.status(404).send({ message: 'No user with the given ID' });
 
-    const adImpression = await AdImpression.findOne({ impressionId });
+    const impressions = await AdImpression.find({
+      impressionId: new RegExp(queryDate + '$'),
+    });
+
+    const adImpressionsCount = getImpressionsCount(impressions);
 
     res.send({
       message: 'Ad impressions count gotten successfully',
-      adImpressionsCount: adImpression.count,
+      adImpressionsCount,
     });
   } catch (err) {
     next(new Error('Error in getting ad impressions count: ' + err));
@@ -44,7 +51,7 @@ interface AdImpressionRes {
 export const registerAdImpression: RequestHandler<any, AdImpressionRes> =
   async (req, res, next) => {
     const userId = req['user'].id;
-    const impressionId = generateImpressionId(userId);
+    const impressionId = generateId(userId);
 
     try {
       const adImpression = await AdImpression.findOne({ impressionId });

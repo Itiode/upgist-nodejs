@@ -24,18 +24,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerAdImpression = exports.getAdImpressionsCount = void 0;
 const ad_impression_1 = __importStar(require("../models/ad-impression"));
+const ads_1 = require("../shared/ads");
 const user_1 = __importDefault(require("../models/user"));
 const getAdImpressionsCount = async (req, res, next) => {
+    const { day, month, year } = req.query;
+    const date = { day, month, year };
     const userId = req.params.userId;
-    const impressionId = ad_impression_1.generateImpressionId(userId);
+    const queryDate = ads_1.getQueryDate(date);
     try {
         const user = await user_1.default.findById(userId);
         if (!user)
             return res.status(404).send({ message: 'No user with the given ID' });
-        const adImpression = await ad_impression_1.default.findOne({ impressionId });
+        const impressions = await ad_impression_1.default.find({
+            impressionId: new RegExp(queryDate + '$'),
+        });
+        const adImpressionsCount = ad_impression_1.getImpressionsCount(impressions);
         res.send({
             message: 'Ad impressions count gotten successfully',
-            adImpressionsCount: adImpression.count,
+            adImpressionsCount,
         });
     }
     catch (err) {
@@ -46,7 +52,7 @@ exports.getAdImpressionsCount = getAdImpressionsCount;
 // TODO: Identify impressions from mobile app. To prevent endpoint abuse.
 const registerAdImpression = async (req, res, next) => {
     const userId = req['user'].id;
-    const impressionId = ad_impression_1.generateImpressionId(userId);
+    const impressionId = ads_1.generateId(userId);
     try {
         const adImpression = await ad_impression_1.default.findOne({ impressionId });
         if (adImpression) {

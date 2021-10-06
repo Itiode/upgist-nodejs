@@ -20,15 +20,6 @@ const schema = new Schema<AdClick>(
 
 export default mongoose.model('Ad-Click', schema);
 
-export const generateClickId = (userId: string) => {
-  const date = new Date();
-
-  const transformedDate = `${date.getDate()}-${
-    date.getMonth() + 1
-  }-${date.getFullYear()}`;
-
-  return `${userId}:${transformedDate}`;
-};
 
 export const getClicksCount = (clicks: AdClick[]): number => {
   let clicksCount = 0;
