@@ -8,11 +8,10 @@ import {
   updateUser,
   getUserAsAdmin,
   updateBankDetails,
-  assignRole,
+  assignRole, getUser, getUsersCount,
 } from '../../controllers/user/user';
 import admin from '../../middleware/admin';
 import auth from '../../middleware/auth';
-import { getUser } from '../../controllers/user/user';
 
 router.post('/', addUser);
 router.get('/me', auth, getUser);
@@ -21,5 +20,6 @@ router.get('/admin/:phone', auth, admin, getUserAsAdmin);
 router.get('/admin', auth, admin, getUsers);
 router.put('/me/bank-details', auth, updateBankDetails);
 router.put('/assign-role', auth, assignRole);
+router.get('/count', auth, admin, getUsersCount);
 
 export default router;

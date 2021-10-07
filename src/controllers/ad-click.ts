@@ -25,6 +25,7 @@ export const getAdClicksCount: RequestHandler<
     const user = await UserModel.findById(userId);
     if (!user)
       return res.status(404).send({ message: 'No user with the given ID' });
+      
     const adClicks = await AdClick.find({
       clickId: new RegExp(queryDate + '$'),
     });
