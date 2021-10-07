@@ -49,24 +49,33 @@ const getNews = async (req, res, next) => {
     const pageSize = +req.query.pageSize;
     const category = req.query.category;
     try {
-        const news = await news_1.default.find({ category })
-            .skip((pageNumber - 1) * pageSize)
-            .limit(pageSize)
-            .select('-_id -__v -content');
+        let news;
+        if (category) {
+            news = await news_1.default.find({ category })
+                .skip((pageNumber - 1) * pageSize)
+                .limit(pageSize)
+                .select('-_id -__v -content');
+        }
+        else {
+            news = await news_1.default.find()
+                .skip((pageNumber - 1) * pageSize)
+                .limit(pageSize)
+                .select('-_id -__v -content');
+        }
         if (news.length === 0)
             return res.send({
-                message: `No ${category} news found`,
+                message: 'No news found',
                 count: 0,
                 data: [],
             });
         res.send({
-            message: `${category} news fetched successfully`,
+            message: 'News fetched successfully',
             count: news.length,
             data: news,
         });
     }
     catch (err) {
-        next(new Error(`Error in getting ${category} news: ${err}`));
+        next(new Error(`Error in getting news: ${err}`));
     }
 };
 exports.getNews = getNews;

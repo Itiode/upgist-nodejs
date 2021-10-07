@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-interface News {
+export interface News {
   source: string;
   author: string;
   title: string;

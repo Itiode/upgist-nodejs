@@ -241,6 +241,24 @@ export const getUsers: RequestHandler<
   }
 };
 
+interface GetUsersCountRes {
+  message: string;
+  count?: User[];
+}
+
+export const getUsersCount: RequestHandler<any, GetUsersCountRes> = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const usersCount = await UserModel.countDocuments();
+    res.send({ message: 'Users count gotten successfully', count: usersCount });
+  } catch (e) {
+    next(new Error('Error in adding user: ' + e));
+  }
+};
+
 interface AddBankDetailsRes {
   message: string;
 }
@@ -310,7 +328,9 @@ export const assignRole: RequestHandler<any, AssignRoleRes, AssignRoleReq> =
 
         await user.save();
 
-        res.send({ message: `${user.name.first} ${user.name.last} now has the role of ${newRole}` });
+        res.send({
+          message: `${user.name.first} ${user.name.last} now has the role of ${newRole}`,
+        });
       } catch (e) {
         next(new Error('Error in assigning role: ' + e));
       }

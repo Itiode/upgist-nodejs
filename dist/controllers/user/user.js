@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.assignRole = exports.updateBankDetails = exports.getUsers = exports.updateUser = exports.addUser = exports.getUserAsAdmin = exports.getUser = void 0;
+exports.assignRole = exports.updateBankDetails = exports.getUsersCount = exports.getUsers = exports.updateUser = exports.addUser = exports.getUserAsAdmin = exports.getUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_1 = __importStar(require("../../models/user"));
 const getUser = async (req, res, next) => {
@@ -151,6 +151,16 @@ const getUsers = async (req, res, next) => {
     }
 };
 exports.getUsers = getUsers;
+const getUsersCount = async (req, res, next) => {
+    try {
+        const usersCount = await user_1.default.countDocuments();
+        res.send({ message: 'Users count gotten successfully', count: usersCount });
+    }
+    catch (e) {
+        next(new Error('Error in adding user: ' + e));
+    }
+};
+exports.getUsersCount = getUsersCount;
 const updateBankDetails = async (req, res, next) => {
     try {
         const { error } = user_1.validateBankDetails(req.body);
@@ -194,7 +204,9 @@ const assignRole = async (req, res, next) => {
                 user.roles.push(newRole);
             }
             await user.save();
-            res.send({ message: `${user.name.first} ${user.name.last} now has the role of ${newRole}` });
+            res.send({
+                message: `${user.name.first} ${user.name.last} now has the role of ${newRole}`,
+            });
         }
         catch (e) {
             next(new Error('Error in assigning role: ' + e));

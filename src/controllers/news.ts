@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 
-import News from '../models/news';
+import NewsModel, { News } from '../models/news';
 import { fetchNews } from '../services/news';
 
 interface GetNewsAsAdminQueryParams {
@@ -31,9 +31,9 @@ export const getNewsAsAdmin: RequestHandler<
         (article.author || article.source.name) &&
         (article.description || article.content)
       ) {
-        const fetchedNews = await News.findOne({ title: article.title });
+        const fetchedNews = await NewsModel.findOne({ title: article.title });
         if (!fetchedNews) {
-          await new News({
+          await new NewsModel({
             source: article.source.name,
             author: article.author,
             title: article.title,
@@ -70,7 +70,7 @@ export const getNewsAsAdmin: RequestHandler<
 interface GetNewsRes {
   message: string;
   count: number;
-  data: [];
+  data: News[];
 }
 
 interface GetNewsQueryParams {
@@ -86,24 +86,33 @@ export const getNews: RequestHandler<any, GetNewsRes, any, GetNewsQueryParams> =
     const category = req.query.category;
 
     try {
-      const news = await News.find({ category })
-        .skip((pageNumber - 1) * pageSize)
-        .limit(pageSize)
-        .select('-_id -__v -content');
+      let news: News[];
+
+      if (category) {
+        news = await NewsModel.find({ category })
+          .skip((pageNumber - 1) * pageSize)
+          .limit(pageSize)
+          .select('-_id -__v -content');
+      } else {
+        news = await NewsModel.find()
+          .skip((pageNumber - 1) * pageSize)
+          .limit(pageSize)
+          .select('-_id -__v -content');
+      }
 
       if (news.length === 0)
         return res.send({
-          message: `No ${category} news found`,
+          message: 'No news found',
           count: 0,
           data: [],
         });
 
       res.send({
-        message: `${category} news fetched successfully`,
+        message: 'News fetched successfully',
         count: news.length,
         data: news,
       });
     } catch (err) {
-      next(new Error(`Error in getting ${category} news: ${err}`));
+      next(new Error(`Error in getting news: ${err}`));
     }
   };
