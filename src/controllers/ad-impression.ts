@@ -28,6 +28,7 @@ export const getAdImpressionsCount: RequestHandler<
 
     const impressions = await AdImpression.find({
       impressionId: new RegExp(queryDate + '$'),
+      user: userId,
     });
 
     const adImpressionsCount = getImpressionsCount(impressions);

@@ -37,6 +37,7 @@ const getAdImpressionsCount = async (req, res, next) => {
             return res.status(404).send({ message: 'No user with the given ID' });
         const impressions = await ad_impression_1.default.find({
             impressionId: new RegExp(queryDate + '$'),
+            user: userId,
         });
         const adImpressionsCount = ad_impression_1.getImpressionsCount(impressions);
         res.send({
