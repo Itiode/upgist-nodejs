@@ -54,13 +54,15 @@ const getNews = async (req, res, next) => {
             news = await news_1.default.find({ category })
                 .skip((pageNumber - 1) * pageSize)
                 .limit(pageSize)
-                .select('-_id -__v -content');
+                .select('-_id -__v -content')
+                .sort({ _id: -1 });
         }
         else {
             news = await news_1.default.find()
                 .skip((pageNumber - 1) * pageSize)
                 .limit(pageSize)
-                .select('-_id -__v -content');
+                .select('-_id -__v -content')
+                .sort({ _id: -1 });
         }
         if (news.length === 0)
             return res.send({

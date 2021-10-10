@@ -1,5 +1,7 @@
-"# upgist-nodejs" 
+"# upgist-nodejs"
 
 #TODO:
-- Add environment variable checking at startup 
-- TODO: Identify clicks from mobile app. To prevent endpoint abuse.
+
+- Fetch latest news first.
+- Add environment variable checking at startup
+- Identify clicks from mobile app. To prevent endpoint abuse.

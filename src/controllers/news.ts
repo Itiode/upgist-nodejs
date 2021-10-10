@@ -92,12 +92,14 @@ export const getNews: RequestHandler<any, GetNewsRes, any, GetNewsQueryParams> =
         news = await NewsModel.find({ category })
           .skip((pageNumber - 1) * pageSize)
           .limit(pageSize)
-          .select('-_id -__v -content');
+          .select('-_id -__v -content')
+          .sort({ _id: -1 });
       } else {
         news = await NewsModel.find()
           .skip((pageNumber - 1) * pageSize)
           .limit(pageSize)
-          .select('-_id -__v -content');
+          .select('-_id -__v -content')
+          .sort({ _id: -1 });
       }
 
       if (news.length === 0)
