@@ -37,6 +37,7 @@ const getAdClicksCount = async (req, res, next) => {
             return res.status(404).send({ message: 'No user with the given ID' });
         const adClicks = await ad_click_1.default.find({
             clickId: new RegExp(queryDate + '$'),
+            user: userId,
         });
         const adClicksCount = ad_click_1.getClicksCount(adClicks);
         res.send({
